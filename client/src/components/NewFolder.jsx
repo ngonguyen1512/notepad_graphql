@@ -1,22 +1,21 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined';
+import React, { useEffect, useState } from 'react';
 import { addNewFolder } from '../utils/folderUtils';
+import { AddCircleOutlineIcon } from '../utils/icons';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip } from '@mui/material';
 
 export default function NewFolder() {
     const navigate = useNavigate();
-    const [ searchParams, setSearchParam ] = useSearchParams();
     const [ open, setOpen ] = useState(false);
     const [ newFolderName, setNewFolderName ] = useState({});
-
+    const [ searchParams, setSearchParam ] = useSearchParams();
     const popUpName = searchParams.get('popup');
+
     const handleOpenPopUp = () => {
-        // setOpen(true);
+        navigate('/');
         setSearchParam({popup:'add-folder'});
     }
     const handleClose = () => {
-        // setOpen(false);
         setNewFolderName('')
         navigate(-1);
     }   
@@ -24,11 +23,14 @@ export default function NewFolder() {
         setNewFolderName(e.target.value);
     }
     const handleAddNewFolder = async () => {
-        console.log(newFolderName)
         const { addFolder } = await addNewFolder({name: newFolderName});
-        console.log({addFolder});
         handleClose();
     }
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter')
+            handleAddNewFolder();
+    }
+
     useEffect (() => {
         if(popUpName === 'add-folder') {
             setOpen(true);
@@ -36,11 +38,12 @@ export default function NewFolder() {
         }
         setOpen(false);
     }, [popUpName])
+
   return (
     <div>
         <Tooltip title='Add folder' onClick={handleOpenPopUp}>
             <IconButton size='small'>
-                <CreateNewFolderOutlinedIcon sx={{color:'#fff'}}/>
+                <AddCircleOutlineIcon sx={{color:'#fff'}}/>
             </IconButton>
         </Tooltip>
         <Dialog open={open} onClose={handleClose}>
@@ -50,8 +53,8 @@ export default function NewFolder() {
                     autoFocus margin='dense' id='name' label='Folder name' 
                     size='small' variant='standard' sx={{width: '400px'}}
                     autoComplete='off' value={newFolderName} onChange={handleNewFolderChange}
+                    onKeyDown={handleKeyDown}
                 >
-
                 </TextField>
             </DialogContent>
             <DialogActions>

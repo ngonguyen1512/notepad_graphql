@@ -52,6 +52,23 @@ export const resolvers = {
             await newFolder.save();
             return newFolder;
         },
+        updateFolder: async (parent, args) => {
+            const folderId = args.id;
+            const folder = await FolderModel.findByIdAndUpdate(folderId, args); 
+            return folder;
+        },
+        deleteFolder: async (parent, args) => {
+            const folderId = args.id;
+            const deletedNote = await NoteModel.deleteMany({ folderId: folderId });
+            if (deletedNote) {
+                const folder = await FolderModel.findByIdAndDelete(folderId);
+                if(folder) 
+                    return true;
+                else
+                    return false;
+            } else 
+                return false;
+        },
         addNote: async (parent, args) => {
             const newNote = new NoteModel(args);
             await newNote.save();
@@ -59,8 +76,7 @@ export const resolvers = {
         },
         updateNote: async (parent, args) => {
             const noteId = args.id;
-            const note = await NoteModel.findById(noteId); 
-            await NoteModel.updateOne(args)
+            const note = await NoteModel.findByIdAndUpdate(noteId, args); 
             return note;
         },
         deleteNote: async (parent, args) => {

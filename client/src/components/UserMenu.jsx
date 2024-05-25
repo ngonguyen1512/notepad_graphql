@@ -3,8 +3,8 @@ import { AuthContext } from '../context/AuthProvider'
 import { Avatar, Box, Menu, MenuItem, Typography } from '@mui/material';
 
 export default function UserMenu() {
-    const { user: { displayName, photoURL, auth } } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
+    const { user: { displayName, photoURL, auth } } = useContext(AuthContext);
     const open = Boolean(anchorEl);
 
     const handleLogout = () => {

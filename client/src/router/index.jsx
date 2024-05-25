@@ -1,13 +1,12 @@
-import { Outlet, createBrowserRouter } from "react-router-dom";
-import Home from '../pages/Home'
+import Home from '../pages/Home';
 import Login from '../pages/Login';
-import ProtectedRoot from '../router/ProtectedRoot';
-import AuthProvider from '../context/AuthProvider';
 import ErrorPage from "../pages/ErrorPage";
-import NoteList from "../components/NoteList";
-import Note from "../components/Note";
-import { addNewNote, noteLoader, notesLoader, updateNote } from "../utils/noteUtils";
+import AuthProvider from '../context/AuthProvider';
+import ProtectedRoot from '../router/ProtectedRoot';
 import { foldersLoader } from "../utils/folderUtils";
+import { Note, NoteList } from '../components/index';
+import { Outlet, createBrowserRouter } from "react-router-dom";
+import { addNewNote, noteLoader, notesLoader, updateNote } from "../utils/noteUtils";
 
 const AuthLayout = () => {
     return (

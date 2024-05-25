@@ -1,18 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
-import { EditorState, ContentState, convertFromHTML, convertToRaw } from 'draft-js';
-import { Editor } from 'react-draft-wysiwyg';
-import draftToHtml from 'draftjs-to-html';
-import { useLoaderData, useLocation, useSubmit } from 'react-router-dom';
 import { debounce } from '@mui/material';
+import draftToHtml from 'draftjs-to-html';
+import { Editor } from 'react-draft-wysiwyg';
+import { useEffect, useMemo, useState } from 'react';
+import { useLoaderData, useLocation, useSubmit } from 'react-router-dom';
+import { EditorState, ContentState, convertFromHTML, convertToRaw } from 'draft-js';
 
 export default function Note() {
-    const location = useLocation();
     const submit = useSubmit();
+    const location = useLocation();
     const { note } = useLoaderData();
-
-    const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
     const [rawHTML, setRawHTML] = useState(note.content);
-
+    const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
+    
     const handleOnChange = (state) => {
         setEditorState(state);
         setRawHTML(draftToHtml(convertToRaw(state.getCurrentContent())));
@@ -42,7 +41,6 @@ export default function Note() {
         }, 1000)
     }, [submit]);
     
-
     useEffect(() => {
         setRawHTML(note.content);
     }, [note.content]);

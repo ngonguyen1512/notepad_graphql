@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 import UserMenu from "../components/UserMenu";
-import FolderList from "../components/FolderList";
+import { FolderList } from '../components/index';
 import { Outlet, useLoaderData } from "react-router-dom";
 
 export default function Home() {

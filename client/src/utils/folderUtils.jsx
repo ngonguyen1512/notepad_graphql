@@ -28,3 +28,27 @@ export const addNewFolder = async (newFolder) => {
   console.log({data})
   return data;
 }
+export const updateFolder = async(id, name) => {
+  const query = `mutation Mutation($id: String!, $name: String!) {
+    updateFolder(id: $id, name: $name) {
+      id
+      name
+      author {
+        name
+      }
+    }
+  }`;
+  const data = await graphQLRequest({ 
+    query, 
+    variables: { id, name } 
+  });
+  console.log({data})
+  return data;
+}
+export const deleteFolderById = async (id) => {
+  const query = `mutation Mutation($id: String!) {
+    deleteFolder(id: $id)
+  }`;
+  const { deleteFolder} = await graphQLRequest({query, variables: {id}});
+  return deleteFolder;
+}

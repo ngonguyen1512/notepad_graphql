@@ -1,21 +1,20 @@
-import { Box, Typography, Grid, List, Card, CardContent, Button } from '@mui/material'
+import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { Link, Outlet, useParams, useLoaderData, useNavigate, useSearchParams, useSubmit } from 'react-router-dom';
-import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
-import { IconButton, Tooltip } from '@mui/material'
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import moment from 'moment'
 import { deleteNoteById } from '../utils/noteUtils';
+import { IconButton, Tooltip } from '@mui/material';
+import { NoteAddOutlinedIcon, DeleteOutlinedIcon } from '../utils/icons';
+import { Box, Typography, Grid, List, Card, CardContent, Button } from '@mui/material';
+import { Link, Outlet, useParams, useLoaderData, useNavigate, useSubmit } from 'react-router-dom';
 
 export default function NoteList() {
+    const submit = useSubmit();
     const navigate = useNavigate();
+    const { folder } = useLoaderData();
     const { noteId, folderId } = useParams();
     const [ reload, setReload ] = useState(false);
     const [activeNoteId, setActiveNoteId] = useState(noteId);
-    const { folder } = useLoaderData();
     const [deletedNoteIds, setDeletedNoteIds] = useState([]);   
 
-    const submit = useSubmit();
     const handleAddNewNote = async () => {
         submit({
             content: '',
@@ -53,7 +52,7 @@ export default function NoteList() {
                         <div dangerouslySetInnerHTML={{ __html: `${content.substring(0, 30) || 'Empty'} ` }} />
                         <Typography sx={{fontSize:'x-small'}}>{moment(updatedAt).format('MMMM Do YYYY, h:mm:ss a')}</Typography>
                     </CardContent>
-                    <Button onClick={(event) => handleDeleteNote(id, event)}><DeleteOutlinedIcon sx={{color: '#fff'}}/></Button>
+                    <Button onClick={(event) => handleDeleteNote(id, event)}><DeleteOutlinedIcon sx={{color: id.toString() === activeNoteId ? '#fff' : '#000'}}/></Button>
                 </Card>
             </Link>
         );
@@ -76,19 +75,14 @@ export default function NoteList() {
                     textAlign: 'left', overflow: 'auto'
                 }}>
                     {!reload ? (
-                    <> 
-                        {folder.notes.length > 0 &&  folder.notes.map(renderNote)}
-                    </>): (
-                    <> 
-                        {folder.notes.length > 0 &&  folder.notes.filter(note => !deletedNoteIds.includes(note.id)).map(renderNote)}
-                    </>
-                )}
+                        <> {folder.notes.length > 0 &&  folder.notes.map(renderNote)} </>
+                    ): (
+                        <> {folder.notes.length > 0 &&  folder.notes.filter(note => !deletedNoteIds.includes(note.id)).map(renderNote)} </>
+                    )}
                 </List>
             </Grid>
             <Grid items xs={8} sx={{ height: '100%' }}>
-                {activeNoteId &&
-                    <Outlet />
-                }
+                {activeNoteId && <Outlet /> }
             </Grid>
         </Grid>
 
