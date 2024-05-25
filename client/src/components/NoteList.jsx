@@ -1,15 +1,19 @@
-import { Box, Typography, Grid, List, Card, CardContent } from '@mui/material'
+import { Box, Typography, Grid, List, Card, CardContent, Button } from '@mui/material'
 import { useEffect, useState } from 'react';
 import { Link, Outlet, useParams, useLoaderData, useNavigate, useSearchParams, useSubmit } from 'react-router-dom';
 import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
 import { IconButton, Tooltip } from '@mui/material'
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import moment from 'moment'
+import { deleteNoteById } from '../utils/noteUtils';
 
 export default function NoteList() {
     const navigate = useNavigate();
     const { noteId, folderId } = useParams();
+    const [ reload, setReload ] = useState(false);
     const [activeNoteId, setActiveNoteId] = useState(noteId);
     const { folder } = useLoaderData();
+    const [deletedNoteIds, setDeletedNoteIds] = useState([]);   
 
     const submit = useSubmit();
     const handleAddNewNote = async () => {
@@ -21,15 +25,39 @@ export default function NoteList() {
             action: `/folder/${folderId}`
         })
     }
+    const handleDeleteNote = async (id, event) => {
+        event.preventDefault();
+        console.log('id: ',id);
+        navigate(`/folder/${folderId}`);
+        deleteNoteById(id);
+        setDeletedNoteIds([...deletedNoteIds, id]);
+        setReload(true);
+    }
+
     useEffect(() => {
         if (noteId) {
             setActiveNoteId(noteId);
             return;
-        } 
-        if (folder?.notes?.[0]) {
-            navigate(`note/${folder.notes[0].id}`);
         }
-    }, [noteId, folder.notes])
+        if (folder?.notes?.[0]) {
+            setReload(true);
+            // navigate(`note/${folder.notes[0].id}`);
+        }
+    }, [noteId, folder.notes, reload])
+
+    const renderNote = ({ id, content, updatedAt }) => {
+        return (
+            <Link key={id} to={`note/${id}`} style={{ textDecoration: 'none' }} onClick={() => setActiveNoteId(id.toString())}>
+                <Card sx={{ display: 'flex', justifyContent: 'space-between', alignItems:'center', margin: '1% 0', backgroundColor: id.toString() === activeNoteId ? '#3e3ea4' : null, color: id.toString() === activeNoteId ? '#fff' : '#000' }}>
+                    <CardContent sx={{ '&:last-child': { padding: '3% 4%' } }}>
+                        <div dangerouslySetInnerHTML={{ __html: `${content.substring(0, 30) || 'Empty'} ` }} />
+                        <Typography sx={{fontSize:'x-small'}}>{moment(updatedAt).format('MMMM Do YYYY, h:mm:ss a')}</Typography>
+                    </CardContent>
+                    <Button onClick={(event) => handleDeleteNote(id, event)}><DeleteOutlinedIcon sx={{color: '#fff'}}/></Button>
+                </Card>
+            </Link>
+        );
+    }
 
     return (
         <Grid container sx={{ width: '100%', height: '100%' }} >
@@ -47,22 +75,20 @@ export default function NoteList() {
                     width: '100%', height: '100%', padding: '2%',
                     textAlign: 'left', overflow: 'auto'
                 }}>
-                    {folder.notes.map(({ id, content, updatedAt }) => {
-                        return (
-                            <Link key={id} to={`note/${id}`} style={{ textDecoration: 'none' }} onClick={() => setActiveNoteId(id.toString())}>
-                                <Card sx={{ margin: '1% 0', backgroundColor: id.toString() === activeNoteId ? '#3e3ea4' : null, color: id.toString() === activeNoteId ? '#fff' : '#000' }}>
-                                    <CardContent sx={{ '&:last-child': { padding: '3% 4%' } }}>
-                                        <div dangerouslySetInnerHTML={{ __html: `${content.substring(0, 30) || 'Empty'} ` }} />
-                                        <Typography sx={{fontSize:'x-small'}}>{moment(updatedAt).format('MMMM Do YYYY, h:mm:ss a')}</Typography>
-                                    </CardContent>
-                                </Card>
-                            </Link>
-                        )
-                    })}
+                    {!reload ? (
+                    <> 
+                        {folder.notes.length > 0 &&  folder.notes.map(renderNote)}
+                    </>): (
+                    <> 
+                        {folder.notes.length > 0 &&  folder.notes.filter(note => !deletedNoteIds.includes(note.id)).map(renderNote)}
+                    </>
+                )}
                 </List>
             </Grid>
             <Grid items xs={8} sx={{ height: '100%' }}>
-                <Outlet />
+                {activeNoteId &&
+                    <Outlet />
+                }
             </Grid>
         </Grid>
 

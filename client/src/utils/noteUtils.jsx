@@ -61,3 +61,10 @@ export const updateNote = async({params, request}) => {
     const { updateNote } = await graphQLRequest({query, variables: formDataObj});
     return updateNote;
 }
+export const deleteNoteById = async (id) => {
+    const query = `mutation DeleteNote($id: String!) {
+        deleteNote(id: $id)
+      } `;
+    const { deleteNote } = await graphQLRequest({query, variables: {id}});
+    return deleteNote;
+}

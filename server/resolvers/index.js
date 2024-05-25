@@ -60,9 +60,16 @@ export const resolvers = {
         updateNote: async (parent, args) => {
             const noteId = args.id;
             const note = await NoteModel.findById(noteId); 
-            const update = await NoteModel.updateOne(args);
-            
+            await NoteModel.updateOne(args)
             return note;
+        },
+        deleteNote: async (parent, args) => {
+            const noteId = args.id;
+            const note = await NoteModel.findByIdAndDelete(noteId);
+            if(note) 
+                return true;
+            else
+                return false;
         },
         register: async (parent, args) => {
             const foundAuthor = await AuthorModel.findOne({uid: args.uid});
