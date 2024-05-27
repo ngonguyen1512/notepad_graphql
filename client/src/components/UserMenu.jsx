@@ -33,6 +33,7 @@ export default function UserMenu() {
                     vertical: 'top',
                     horizontal: 'right',
                 }}>
+                <MenuItem >Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
         </Box>

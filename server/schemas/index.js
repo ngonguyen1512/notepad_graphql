@@ -29,9 +29,11 @@ type Mutation {
     addFolder ( name: String! ): Folder,
     updateFolder ( id: String!, name: String! ): Folder,
     deleteFolder ( id: String! ): Boolean,
+
     addNote( content: String!, folderId: ID! ): Note,
     updateNote( id: String!, content: String! ): Note,
     deleteNote( id: String! ): Boolean,
-    register( uid:String!, name:String!): Author
+
+    register( uid:ID!, name:String!): Author,
 }
 `;

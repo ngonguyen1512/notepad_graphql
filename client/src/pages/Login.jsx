@@ -7,14 +7,16 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 export default function Login() {
     const auth = getAuth();
+    console.log('auth1: ', auth);
     const { user } = useContext(AuthContext);
+
     const handleLoginWithGoogle = async () => {
         const provider = new GoogleAuthProvider();
         const result = await signInWithPopup(auth, provider);
         const { user: { uid, displayName } } = result;
 
         const response = await graphQLRequest({
-            query: ` mutation register($uid: String!, $name: String!) {
+            query: `mutation register($uid: ID!, $name: String!) {
                 register(uid: $uid, name: $name) {
                     uid
                     name
@@ -25,6 +27,8 @@ export default function Login() {
                 name: displayName
             }
         });
+
+        return response;
     }
 
     if(localStorage.getItem('accessToken')) {
