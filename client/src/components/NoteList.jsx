@@ -81,7 +81,7 @@ export default function NoteList() {
                     )}
                 </List>
             </Grid>
-            <Grid items xs={8} sx={{ height: '100%' }}>
+            <Grid items xs={8} sx={{ height: '100%', padding: '1%' }}>
                 {activeNoteId && <Outlet /> }
             </Grid>
         </Grid>
